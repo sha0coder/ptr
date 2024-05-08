@@ -8,11 +8,9 @@ ptr_drv-objs := driver/ptr_comm.o driver/ptr_drv.o driver/ptr_modules.o
 
 all:
 	$(MAKE) -C $(KERNEL_DIR) M=$(PWD) modules
-	gcc userland/ptr.c -o ptr
 
 clean:
 	$(MAKE) -C $(KERNEL_DIR) M=$(PWD) clean
-	rm ptr
 
 install:
 	$(MAKE) -C $(KERNEL_DIR) M=$(PWD) modules_install
