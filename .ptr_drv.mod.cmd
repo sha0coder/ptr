@@ -1,1 +1,0 @@
-savedcmd_/home/sha0/src/ptr/ptr_drv.mod := printf '%s\n'   driver/ptr_comm.o driver/ptr_drv.o driver/ptr_modules.o driver/ptr_verify.o | awk '!x[$$0]++ { print("/home/sha0/src/ptr/"$$0) }' > /home/sha0/src/ptr/ptr_drv.mod
