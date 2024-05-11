@@ -4,7 +4,7 @@ KERNEL_DIR ?= /lib/modules/$(shell uname -r)/build
 
 ccflags-y := -I$(PWD)/include
 
-ptr_drv-objs := driver/ptr_comm.o driver/ptr_drv.o driver/ptr_modules.o
+ptr_drv-objs := driver/ptr_comm.o driver/ptr_drv.o driver/ptr_modules.o driver/ptr_verify.o
 
 all:
 	$(MAKE) -C $(KERNEL_DIR) M=$(PWD) modules

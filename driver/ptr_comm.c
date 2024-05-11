@@ -14,12 +14,14 @@
 static int majorNumber;
 static struct class*  ptrClass  = NULL;
 static struct cdev ptr_cdev;
+static unsigned long long *glob_seek = 0;
 
 static int dev_open(struct inode *, struct file *);
 static int dev_release(struct inode *, struct file *);
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
 static ssize_t dev_write(struct file *, const char *, size_t, loff_t *);
 static long dev_ioctl(struct file *, unsigned int, unsigned long);
+static loff_t dev_seek(struct file *filep, loff_t offset, int whence);
 
 extern struct module *find_module_by_name(const char *name);
 
@@ -28,6 +30,7 @@ struct file_operations fops = {
     .read = dev_read,
     .write = dev_write,
     .release = dev_release,
+    .llseek = dev_seek,
     .unlocked_ioctl = dev_ioctl,
 };
 
@@ -77,27 +80,45 @@ void cleanup_device(void) {
     unregister_chrdev(majorNumber, DEVICE_NAME);
 }
 
+// file operations
+
 static int dev_open(struct inode *inodep, struct file *filep) {
-    printk(KERN_INFO "PTR: Dispositivo abierto\n");
     return 0;
 }
 
+static loff_t dev_seek(struct file *filep, loff_t offset, int whence) {
+    loff_t new_pos = 0;
+
+    switch (whence) {
+    case SEEK_SET:
+        break;
+    case SEEK_CUR:
+        glob_seek = (unsigned long long *)offset;
+        break;
+    case SEEK_END:
+        break;
+    default:
+        return -EINVAL;
+    }
+
+    if (new_pos < 0) return -EINVAL;
+    filep->f_pos = new_pos;
+    return new_pos;
+}
+
 static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *offset) {
-    printk(KERN_INFO "PTR: Leyendo desde el dispositivo\n");
     return 0;
 }
 
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset) {
-    printk(KERN_INFO "PTR: Escribiendo en el dispositivo\n");
     return len;
 }
 
 static int dev_release(struct inode *inodep, struct file *filep) {
-    printk(KERN_INFO "PTR: Dispositivo cerrado\n");
     return 0;
 }
 
-static long dev_ioctl(struct file *file, unsigned int cmd, unsigned long arg) {
+static long dev_ioctl(struct file *filep, unsigned int cmd, unsigned long arg) {
     switch (cmd) {
         case IOCTL_SET_MSG:
             printk(KERN_INFO "PTR: IOCTL set message\n");
